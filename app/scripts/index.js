@@ -1,5 +1,8 @@
-var Player = require('./models/player.js').Player;
+var $ = require('jquery');
+var Backbone = require('backbone');
 
-var newPlayer = new Player();
+require('./router.js');
 
-console.log(newPlayer);
+$(function(){
+  Backbone.history.start();
+});

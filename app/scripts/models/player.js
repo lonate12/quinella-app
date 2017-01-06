@@ -1,7 +1,7 @@
 var Backbone = require('backbone');
 
 var Player = Backbone.Model.extend({
-
+  idAttribute: 'objectId'
 });
 
 var PlayerCollection = Backbone.Collection.extend({
