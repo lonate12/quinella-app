@@ -6,7 +6,10 @@ var Player = Backbone.Model.extend({
 
 var PlayerCollection = Backbone.Collection.extend({
   model: Player,
-  url: 'https://zugzwang.herokupp.com/classes/Players/'
+  url: 'https://zugzwang.herokuapp.com/classes/Players/',
+  parse: function(data){
+    return data.results;
+  }
 });
 
 module.exports = {
