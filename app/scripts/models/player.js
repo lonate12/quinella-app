@@ -9,7 +9,8 @@ var PlayerCollection = Backbone.Collection.extend({
   url: 'https://zugzwang.herokuapp.com/classes/Players/',
   parse: function(data){
     return data.results;
-  }
+  },
+  comparator: 'selection_position'
 });
 
 module.exports = {

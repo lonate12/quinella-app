@@ -36,34 +36,58 @@ var MainView = React.createClass({
   getInitialState: function(){
     return{
       playerCollection: new PlayerCollection(),
-      teams: new TeamCollection()
+      teams: new TeamCollection(),
+      gameFull: false,
+      shuffleNames: true,
+      selectTeam: false
     }
   },
   componentWillMount: function(){
     var self = this;
     this.state.playerCollection.fetch().then(function(){
       self.setState({playerCollection: self.state.playerCollection});
+      if (self.state.playerCollection.length === 8){
+        self.setState({gameFull: true});
+      }
+      if (self.state.playerCollection.at(0).get('selection_position')) {
+        self.setState({shuffleNames: false, selectTeam: true});
+      }
     });
 
     this.state.teams.fetch().then(function(){
       self.setState({teams: self.state.teams});
     });
   },
+  shuffleNames: function(){
+    self = this;
+    self.state.playerCollection.reset(self.state.playerCollection.shuffle(), {silent: true});
+    this.state.playerCollection.forEach(function(player, index){
+      player.unset('createdAt');
+      player.unset('updatedAt');
+      player.set('selection_position', index+1);
+      player.save();
+    });
+    this.setState({shuffleNames: false, playerCollection: this.state.playerCollection, selectTeam: true});
+    // this.setState({playerCollection: this.state.playerCollection});
+  },
   addName: function(newPlayer){
-    console.log(newPlayer);
     this.state.playerCollection.create(newPlayer);
     this.setState({playerCollection: this.state.playerCollection});
+    if(this.state.playerCollection.length === 8){
+      this.setState({gameFull: true});
+    }
+  },
+  assignTeam: function(){
+    console.log('team');
   },
   render: function(){
     var players = this.state.playerCollection.map(function(player){
-      console.warn(player);
       return(
         <li key={player.cid}>{player.get('name')}: {player.get('team')}</li>
       );
     })
 
     var teams = this.state.teams.map(function(team){
-      console.log(team);
       return (
         <li key={team.get('objectId')}>{team.get('name')}</li>
       )
@@ -83,10 +107,12 @@ var MainView = React.createClass({
           </div>
         </div>
         <div className="row">
-          <div className="col-md-6 col-md-offset-3">
+          <div className={this.state.gameFull ? "hide" : "col-md-6 col-md-offset-3"}>
             <AddPlayerForm addName={this.addName}/>
           </div>
         </div>
+        <button type="button" className={this.state.shuffleNames ? "btn btn-success" : "hide"} onClick={this.shuffleNames}>Shuffle Names</button>
+        <button type="button" className={this.state.selectTeam ? "btn btn-success" : "hide"} onClick={this.assignTeam}>Assign Random Team</button>
       </div>
     );
   }
