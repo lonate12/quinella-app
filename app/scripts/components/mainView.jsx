@@ -39,7 +39,8 @@ var MainView = React.createClass({
       teams: new TeamCollection(),
       gameFull: false,
       shuffleNames: true,
-      selectTeam: false
+      selectTeam: false,
+      selectingPlayer: ''
     }
   },
   componentWillMount: function(){
@@ -51,24 +52,42 @@ var MainView = React.createClass({
       }
       if (self.state.playerCollection.at(0).get('selection_position')) {
         self.setState({shuffleNames: false, selectTeam: true});
+        self.setSelectingPlayer();
       }
     });
 
     this.state.teams.fetch().then(function(){
-      self.setState({teams: self.state.teams});
+      var filteredList = self.state.teams.filter(function(team){
+        return !team.get('assigned');
+      })
+      var filteredCollection = new TeamCollection(filteredList);
+      self.setState({teams: filteredCollection});
     });
   },
   shuffleNames: function(){
     self = this;
     self.state.playerCollection.reset(self.state.playerCollection.shuffle(), {silent: true});
+
     this.state.playerCollection.forEach(function(player, index){
       player.unset('createdAt');
       player.unset('updatedAt');
       player.set('selection_position', index+1);
       player.save();
     });
+
     this.setState({shuffleNames: false, playerCollection: this.state.playerCollection, selectTeam: true});
-    // this.setState({playerCollection: this.state.playerCollection});
+    this.setSelectingPlayer();
+  },
+  setSelectingPlayer: function(){
+    var currentPlayer = this.state.playerCollection.find(function(player){
+      return !player.get('team');
+    });
+
+    if (currentPlayer){
+      this.setState({selectingPlayer: currentPlayer.get('name')});
+    } else {
+      this.setState({selectTeam: false});
+    }
   },
   addName: function(newPlayer){
     this.state.playerCollection.create(newPlayer);
@@ -78,7 +97,26 @@ var MainView = React.createClass({
     }
   },
   assignTeam: function(){
-    console.log('team');
+    var randomTeam = this.state.teams.shuffle()[0], currentPlayer = this.state.selectingPlayer;
+    var currentPlayer = this.state.playerCollection.findWhere({name: currentPlayer});
+    var self = this;
+
+    currentPlayer.set('team', randomTeam.get('name'));
+    currentPlayer.unset('updatedAt');
+    currentPlayer.unset('createdAt');
+
+    randomTeam.set('assigned', currentPlayer.get('name'));
+    randomTeam.unset('updatedAt');
+    randomTeam.unset('createdAt');
+
+
+    randomTeam.save().then(function(){
+      currentPlayer.save().then(function(){
+        self.setSelectingPlayer();
+        self.state.teams.remove(randomTeam);
+        self.setState({teams: self.state.teams});
+      });
+    });
   },
   render: function(){
     var players = this.state.playerCollection.map(function(player){
@@ -112,7 +150,7 @@ var MainView = React.createClass({
           </div>
         </div>
         <button type="button" className={this.state.shuffleNames ? "btn btn-success" : "hide"} onClick={this.shuffleNames}>Shuffle Names</button>
-        <button type="button" className={this.state.selectTeam ? "btn btn-success" : "hide"} onClick={this.assignTeam}>Assign Random Team</button>
+        <button type="button" className={this.state.selectTeam ? "btn btn-success" : "hide"} onClick={this.assignTeam}>{this.state.selectingPlayer}, click to receive your random team</button>
       </div>
     );
   }
