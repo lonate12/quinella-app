@@ -38,7 +38,7 @@ var MainView = React.createClass({
       playerCollection: new PlayerCollection(),
       teams: new TeamCollection(),
       gameFull: false,
-      shuffleNames: true,
+      shuffleNames: false,
       selectTeam: false,
       selectingPlayer: ''
     }
@@ -47,9 +47,11 @@ var MainView = React.createClass({
     var self = this;
     this.state.playerCollection.fetch().then(function(){
       self.setState({playerCollection: self.state.playerCollection});
+
       if (self.state.playerCollection.length === 8){
-        self.setState({gameFull: true});
+        self.setState({gameFull: true, shuffleNames: true});
       }
+
       if (self.state.playerCollection.at(0).get('selection_position')) {
         self.setState({shuffleNames: false, selectTeam: true});
         self.setSelectingPlayer();
@@ -93,7 +95,7 @@ var MainView = React.createClass({
     this.state.playerCollection.create(newPlayer);
     this.setState({playerCollection: this.state.playerCollection});
     if(this.state.playerCollection.length === 8){
-      this.setState({gameFull: true});
+      this.setState({gameFull: true, shuffleNames: true});
     }
   },
   assignTeam: function(){
