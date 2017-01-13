@@ -40,7 +40,9 @@ var MainView = React.createClass({
       gameFull: false,
       shuffleNames: false,
       selectTeam: false,
-      selectingPlayer: ''
+      selectingPlayer: '',
+      noNameError: false,
+      isDuplicate: false
     }
   },
   componentWillMount: function(){
@@ -92,8 +94,19 @@ var MainView = React.createClass({
     }
   },
   addName: function(newPlayer){
+    if (!newPlayer.name) {
+      this.setState({noNameError: true});
+      return;
+    }
+
+    var isNew = this.state.playerCollection.findWhere({name: newPlayer.name});
+    if (isNew != undefined){
+      this.setState({isDuplicate: true});
+      return;
+    }
+
     this.state.playerCollection.create(newPlayer);
-    this.setState({playerCollection: this.state.playerCollection});
+    this.setState({playerCollection: this.state.playerCollection, noNameError: false, isDuplicate: false});
     if(this.state.playerCollection.length === 8){
       this.setState({gameFull: true, shuffleNames: true});
     }
@@ -148,6 +161,12 @@ var MainView = React.createClass({
         </div>
         <div className="row">
           <div className={this.state.gameFull ? "hide" : "col-md-6 col-md-offset-3"}>
+            <div className={this.state.isDuplicate ? "bg-danger" : "hide"}>
+              <h4 className="text-danger center-block">Este jugador ya esta apuntado.</h4>
+            </div>
+            <div className={this.state.noNameError ? "bg-danger" : "hide"}>
+              <h4 className="text-danger center-block">Por favor poner un nombre.</h4>
+            </div>
             <AddPlayerForm addName={this.addName}/>
           </div>
         </div>
