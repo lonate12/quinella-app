@@ -5765,4 +5765,32 @@ button.close {
 
 img {
   max-width: 100%; }
+
+body {
+  color: white; }
+
+#app {
+  height: 100vh;
+  background-color: #007849; }
+
+ul {
+  list-style: none; }
+
+.teams {
+  text-align: right;
+  border: 1px solid white;
+  background-color: rgba(225, 225, 225, 0.4);
+  border-radius: 4px; }
+
+.players ul {
+  padding: 0; }
+
+.forms {
+  margin-top: 15px; }
+
+.btn-success {
+  background-color: #FFCE00;
+  border: 1px solid #262228;
+  color: #262228; }
+
 /*# sourceMappingURL=app.css.map */
