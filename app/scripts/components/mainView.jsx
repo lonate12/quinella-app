@@ -148,13 +148,13 @@ var MainView = React.createClass({
     return(
       <div className="container">
         <div className="row">
-          <div className="col-md-6 col-xs-10 col-xs-offset-1 players">
+          <div className="col-md-6 col-xs-10 col-xs-offset-1 col-md-offset-0 players">
             <ul>
               <h3>Jugadores</h3>
               {players}
             </ul>
           </div>
-          <div className="col-md-6 col-xs-10 col-xs-offset-1 teams">
+          <div className="col-md-6 col-xs-10 col-xs-offset-1 col-md-offset-0 teams">
             <ul>
               <h3>Equipos Disponibles</h3>
               {teams}
