@@ -26,7 +26,7 @@ var AddPlayerForm = React.createClass({
           <label htmlFor="name">Nombre para Agregar</label>
           <input onChange={this.handleChange} type="text" className="form-control" id="name" placeholder="Nombre de Jugador" value={this.state.name}/>
         </div>
-        <button type="submit" className="btn btn-default">Agregar</button>
+        <button type="submit" className="btn btn-success pull-right">Agregar</button>
       </form>
     );
   }
@@ -148,18 +148,20 @@ var MainView = React.createClass({
     return(
       <div className="container">
         <div className="row">
-          <div className="col-md-6">
+          <div className="col-md-6 col-xs-10 col-xs-offset-1 players">
             <ul>
+              <h3>Jugadores</h3>
               {players}
             </ul>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-6 col-xs-10 col-xs-offset-1 teams">
             <ul>
+              <h3>Equipos Disponibles</h3>
               {teams}
             </ul>
           </div>
         </div>
-        <div className="row">
+        <div className="row forms">
           <div className={this.state.gameFull ? "hide" : "col-md-6 col-md-offset-3"}>
             <div className={this.state.isDuplicate ? "bg-danger" : "hide"}>
               <h4 className="text-danger center-block">Este jugador ya esta apuntado.</h4>
@@ -170,8 +172,8 @@ var MainView = React.createClass({
             <AddPlayerForm addName={this.addName}/>
           </div>
         </div>
-        <button type="button" className={this.state.shuffleNames ? "btn btn-success" : "hide"} onClick={this.shuffleNames}>Shuffle Names</button>
-        <button type="button" className={this.state.selectTeam ? "btn btn-success" : "hide"} onClick={this.assignTeam}>{this.state.selectingPlayer}, click to receive your random team</button>
+        <button type="button" className={this.state.shuffleNames ? "btn btn-success pull-right" : "hide"} onClick={this.shuffleNames}>Shuffle Names</button>
+        <button type="button" className={this.state.selectTeam ? "btn btn-success pull-right" : "hide"} onClick={this.assignTeam}>{this.state.selectingPlayer}, click to receive your random team</button>
       </div>
     );
   }
